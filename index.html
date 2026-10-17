@@ -816,7 +816,26 @@ function renderAdaptiveQuestion(){
  const options=q.a.map((text,index)=>({text,correct:index===q.c})).sort(()=>Math.random()-.5);adaptiveState.currentOptions=options;
  box.innerHTML=`<div class="chapter-number">ADAPTIVE TEST · ${adaptiveState.n+1}/15 · LEVEL ${q.level}/10</div><div class="progress"><div style="width:${adaptiveState.n/15*100}%"></div></div><h3>${esc(q.q)}</h3>${q.image?`<img src="${q.image}" alt="${esc(q.imageAlt||'古着の画像')}" style="display:block;width:100%;max-width:520px;max-height:360px;object-fit:contain;margin:16px auto;border-radius:12px;background:#eee"><p class="muted" style="text-align:center">学習用イメージ（実物の販売写真ではありません）</p>`:''}<div class="answers">${options.map((a,i)=>`<button class="answer" onclick="answerAdaptive(${i})">${String.fromCharCode(65+i)}. ${esc(a.text)}</button>`).join('')}</div><p class="muted">正解すると次の難易度が上がり、不正解なら現在のレベル付近で確認します。</p>`;
 }
-function answerAdaptive(i){const q=adaptiveState.current;if(!q)return;const picked=adaptiveState.currentOptions[i];if(picked?.correct){adaptiveState.score++;adaptiveState.level=Math.min(10,Math.max(adaptiveState.level,q.level)+1);adaptiveState.peak=Math.max(adaptiveState.peak,adaptiveState.level);}else{adaptiveState.level=Math.max(1,Math.min(10,q.level));}adaptiveState.seen.push(q.q);adaptiveState.n++;renderAdaptiveQuestion();}
+function answerAdaptive(i){
+ const q=adaptiveState.current;if(!q)return;
+ const picked=adaptiveState.currentOptions[i];
+ const isCorrect=!!picked?.correct;
+ if(isCorrect){adaptiveState.score++;adaptiveState.level=Math.min(10,Math.max(adaptiveState.level,q.level)+1);adaptiveState.peak=Math.max(adaptiveState.peak,adaptiveState.level);}
+ else{adaptiveState.level=Math.max(1,Math.min(10,q.level));}
+ adaptiveState.seen.push(q.q);adaptiveState.n++;
+ const box=document.getElementById('placementBox');
+ const correctAnswer=q.a[q.c];
+ box.innerHTML=`<div class="chapter-number">QUESTION FEEDBACK · ${adaptiveState.n}/15</div>
+ <div class="note" style="border-left:5px solid ${isCorrect?'#2f855a':'#c05621'};padding:16px;margin:14px 0;">
+ <h3 style="margin-top:0;color:${isCorrect?'#276749':'#9c4221'}">${isCorrect?'✓ 正解！':'✕ 不正解'}</h3>
+ <p><strong>問題：</strong>${esc(q.q)}</p>
+ <p><strong>あなたの回答：</strong>${esc(picked?.text||'未選択')}</p>
+ ${isCorrect?'':`<p><strong>正解：</strong>${esc(correctAnswer)}</p>`}
+ <p><strong>解説：</strong>${esc(q.why||'複数の仕様を照合し、根拠を確認することが大切です。')}</p>
+ </div>
+ <div class="progress"><div style="width:${adaptiveState.n/15*100}%"></div></div>
+ <button class="primary" onclick="renderAdaptiveQuestion()">${adaptiveState.n>=15?'診断結果を見る →':'次の問題へ →'}</button>`;
+}
 function showAdaptiveResult(){
  // 正解数と到達難易度の両方を使い、連続正解だけで極端な評価にならないようにする
  const accuracy=adaptiveState.score/15;const level=Math.max(1,Math.min(10,Math.round((adaptiveState.peak*0.7)+(accuracy*4)-0.5)));
