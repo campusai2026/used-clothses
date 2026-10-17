@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FuruLearn | 古着の教科書</title>
+<style>
+:root{
+ --bg:#f2eee5;--paper:#fffdf8;--ink:#28291f;
+ --green:#304c3b;--orange:#b66d45;--line:#ded5c6;
+ --muted:#797366;--accent:#58cc02;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font-family:Arial,"Noto Sans JP",sans-serif;line-height:1.9}
+button{font:inherit;cursor:pointer}
+header{background:var(--green);color:white;padding:15px 5%;
+ display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.logo{font-family:Georgia,serif;font-size:27px;font-weight:bold}
+.logo small{display:block;font:10px Arial;letter-spacing:3px}
+nav{display:flex;gap:7px;flex-wrap:wrap}
+nav button{background:transparent;color:white;border:1px solid #ffffff70;
+ border-radius:25px;padding:7px 14px}
+nav button.active,nav button:hover{background:white;color:var(--green)}
+main{max-width:1160px;margin:auto;padding:25px 18px 60px}
+.hidden{display:none!important}
+.hero{background:var(--green);color:white;border-radius:16px;padding:35px;margin-bottom:30px;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:3px;color:#d9c7a6;font-weight:bold}
+h1{font-size:clamp(29px,5vw,47px);line-height:1.35;margin:10px 0}
+h2{font-size:25px;line-height:1.5}
+h3{line-height:1.5}
+.hero p,.bookhead p{color:#e5e8df;max-width:800px;margin:auto}
+.primary,.secondary{border:0;border-radius:12px;padding:12px 24px;font-weight:bold;font-size:16px;box-shadow:0 4px 0 #00000020}
+.primary{background:var(--accent);color:white}
+.primary:hover{filter:brightness(1.05)}
+.secondary{background:#e7dfd1;color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.brand-card{background:var(--paper);border:1px solid var(--line);
+ border-radius:12px;overflow:hidden;cursor:pointer}
+.brand-card:hover{box-shadow:0 7px 20px #00000012;transform:translateY(-2px)}
+.brand-cover{height:105px;background:#e7dfd1;color:var(--green);
+ display:flex;align-items:center;justify-content:center;text-align:center;
+ padding:10px;font-family:Georgia,serif;font-size:23px;font-weight:bold}
+.brand-info{padding:14px}
+.brand-info h3{margin:0;font-size:18px}
+.brand-info p{font-size:13px;color:var(--muted);margin:5px 0 10px}
+.pill{background:#e7eee5;color:var(--green);border-radius:20px;
+ padding:3px 9px;font-size:11px}
+.section-head{margin:25px 0 16px}
+.section-head p,.muted{color:var(--muted)}
+.bookhead{background:var(--green);color:white;border-radius:14px;padding:25px;margin:18px 0}
+.bookhead h1{font-size:35px}
+.chapter-nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.chapter-nav button{border:1px solid var(--line);background:var(--paper);
+ padding:9px 13px;border-radius:7px;color:var(--ink)}
+.chapter-nav button.active{background:var(--green);color:white}
+.paper{background:var(--paper);border:1px solid var(--line);
+ border-radius:13px;padding:clamp(17px,4vw,35px);min-width:0}
+.chapter-number{font-size:11px;letter-spacing:2px;color:var(--orange);font-weight:bold}
+.paper h2{border-bottom:2px solid var(--line);padding-bottom:8px}
+.paper h3{margin-top:27px}
+.paper p{margin:13px 0}
+.timeline{border-left:2px solid #c9b99f;margin:22px 0;padding-left:21px}
+.era{position:relative;margin:22px 0}
+.era:before{content:"";position:absolute;left:-27px;top:12px;width:10px;height:10px;
+ background:var(--orange);border-radius:50%}
+.era strong{font-size:18px;color:var(--green)}
+.note{background:#f1eadc;border-left:4px solid var(--orange);
+ padding:13px 16px;margin:20px 0}
+.note small{display:block;color:var(--muted)}
+.term-note{font-size:12px;color:#746c5f;background:#f5f0e7;
+ padding:7px 10px;border-radius:5px;margin:9px 0}
+.model{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.85fr);
+ gap:22px;padding:22px 0;border-bottom:1px solid var(--line);align-items:start}
+.model h3{margin:0 0 8px;font-size:22px}
+.model img{width:100%;height:260px;object-fit:contain;background:#eee8dd;
+ border-radius:8px;display:block}
+.image-credit{font-size:11px;color:var(--muted);margin-top:5px}
+.tag-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(230px,.85fr);
+ gap:22px;padding:22px 0;border-bottom:1px solid var(--line);align-items:start}
+.tag-row img{width:100%;height:235px;object-fit:contain;background:#eee8dd;border-radius:8px}
+.estimate{display:inline-block;background:#e8eee4;color:#304c3b;
+ font-weight:bold;border-radius:5px;padding:3px 9px;font-size:13px}
+.checklist{padding-left:22px}
+.checklist li{margin:8px 0}
+.source-list a{color:#304c3b;overflow-wrap:anywhere}
+.quizbox{max-width:760px;background:var(--paper);border:1px solid var(--line);
+ border-radius:13px;padding:25px;margin:auto}
+.answers{display:grid;gap:12px;margin:20px 0}
+.answer{padding:15px;text-align:left;border:2px solid var(--line);
+ background:#fffdf8;border-radius:12px;font-size:16px;font-weight:bold;cursor:pointer}
+.answer:hover{background:#f5f0e7}
+.answer.correct{background:#e4efe2;border-color:#58cc02;color:#2c5e1a}
+.answer.wrong{background:#f8e4db;border-color:#b66d45;color:#8a3411}
+.progress{height:10px;background:#e5ded2;border-radius:10px;overflow:hidden;margin:15px 0 24px}
+.progress div{height:100%;background:var(--accent);transition:width 0.3s}
+footer{text-align:center;padding:25px;color:var(--muted);font-size:12px}
+@media(max-width:760px){
+ header{align-items:flex-start}nav{width:100%}nav button{flex:1}
+ main{padding:17px 12px 40px}.hero{padding:23px 18px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .brand-info{padding:10px}.brand-info h3{font-size:16px}
+ .model,.tag-row{grid-template-columns:1fr;gap:12px}
+ .model img,.tag-row img{height:240px}
+ .bookhead{padding:20px}.bookhead h1{font-size:30px}
+}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">FuruLearn<small>THE VINTAGE TEXTBOOK</small></div>
+ <nav>
+  <button class="active" data-page="home" onclick="go('home')">ホーム</button>
+  <button data-page="study" onclick="go('study')">ブランド一覧</button>
+  <button data-page="quiz" onclick="go('quiz')">確認テスト</button>
+ </nav>
+</header>
+<main>
+<!-- ホーム画面 -->
+<section id="homePage">
+ <div class="hero">
+  <div class="eyebrow">VINTAGE CLOTHING DUOLINGO STYLE</div>
+  <h1>あなたの古着レベルを診断しよう！</h1>
+  <p>全20問の古着実力診断テストを受けて、初心者〜店長レベルまで、あなたに最適なスタート地点を見つけよう。</p>
+  <div style="margin-top:25px;">
+   <button class="primary" onclick="startPlacementTest()">⚡ 20問の診断テストを始める</button>
+  </div>
+ </div>
+ <div class="section-head">
+  <h2>ブランド一覧から直接選ぶ</h2>
+  <p class="muted">いつでも好きなブランドの教科書を読むこともできます。</p>
+ </div>
+ <div class="grid" id="brandGrid"></div>
+</section>
+
+<!-- 診断テスト画面 -->
+<section id="placementPage" class="hidden">
+ <div class="quizbox" id="placementBox"></div>
+</section>
+
+<!-- 診断結果画面 -->
+<section id="resultPage" class="hidden">
+ <div class="quizbox" id="resultBox" style="text-align:center;"></div>
+</section>
+
+<section id="studyPage" class="hidden">
+ <div id="indexView">
+  <h2>ブランド一覧</h2>
+  <p class="muted">ブランドを選ぶと、歴史・代表モデル・タグと年代判別を学べます。</p>
+  <div class="grid" id="studyGrid"></div>
+ </div>
+ <div id="chapterView" class="hidden">
+  <button class="secondary" onclick="backIndex()">← ブランド一覧に戻る</button>
+  <div class="bookhead" id="bookhead"></div>
+  <div class="chapter-nav" id="chapterNav"></div>
+  <article class="paper" id="lesson"></article>
+ </div>
+</section>
+
+<section id="quizPage" class="hidden">
+ <h2>古着の基礎確認テスト</h2>
+ <p class="muted">教科書で学んだ知識を確認しよう。</p>
+ <div class="quizbox" id="quizbox"></div>
+</section>
+</main>
+<footer>FuruLearn · Vintage Clothing Textbook</footer>
+
+<script>
+const brands=[
+{
+ id:"levis",name:"Levi's",cover:"LEVI'S",category:"デニム",
+ intro:"ジーンズの歴史とヴィンテージデニムを学ぶ。",
+ history:[
+ ["1853年｜雑貨卸売業から始まる","Levi Straussはサンフランシスコで雑貨の卸売業を始めた。当時のアメリカ西部では、鉱山、鉄道、農場などで働く人々が丈夫な衣服を必要としていた。"],
+ ["1873年｜リベットで補強したパンツ","仕立て職人Jacob Davisは、ポケットの端など破れやすい部分を金属のリベットで補強する方法を考案し、特許を取得した。"],
+ ["1890年｜501という番号","商品を整理するためのロットナンバーとして501が使われるようになった。サスペンダーボタンやシンチバックなど当時のディテールが残る。"],
+ ["1930年代｜作業着から日常着へ","西部の牧場や労働の場面で使われていたデニムは、レジャーや日常の服としても注目され、1936年にはレッドタブが登場した。"],
+ ["1940年代｜戦争によるディテールの変化","第二次世界大戦中は物資節約のため仕様が簡略化（大戦モデル）。戦後に一部の仕様が戻るなど歴史的背景が色濃い。"],
+ ["1950年代｜若者文化とジーンズ","映画や音楽を通じて、ジーンズは反骨精神や個性を表現する若者のアイコンとなっていく。"],
+ ["1954年｜ジッパーフライの登場","東部市場を意識してジッパー式の501ZXX（後の505のルーツ）が登場する。"],
+ ["1960年代｜デニムの世界的普及","カウンターカルチャーのうねりの中で、ジーンズが世界的なファッションアイテムへ成長。"],
+ ["1971年｜レッドタブの表記変更","大文字の「LEVI'S」から小文字混じりの「Levi's」へ変更され、年代特定の大きな手がかりとなる。"],
+ ["1980年代以降｜ヴィンテージとしての価値","古着としてのコレクターズアイテム化が進み、復刻品やレプリカも登場するようになった。"]
+ ],
+ models:[
+ ["501","【時代背景・使われ方】過酷なゴールドラッシュ期の鉱山や鉄道工事で働く労働者のために開発されました。屈強な作業に耐えるため、極厚のデニム生地と、負荷がかかる股やポケット口を金属リベットで補強するボタンフライ仕様が採用され、現在のストレートジーンズの原点となりました。","Levi's 501"],
+ ["505","【時代背景・使われ方】1950〜60年代、アメリカ東部市場への進出や、ボタン留めよりも素早い脱着を好む若者・都会のライフスタイルに合わせて開発されました。ジッパーフライ仕様となり、501よりもスッキリとしたテーパードシルエットが特徴です。","Levi's 505"],
+ ["517","【時代背景・使われ方】1970年代、アメリカでカウボーイ文化やブーツスタイルが一般のファッションに浸透した時代に誕生しました。裾に向かって緩やかに広がるブーツカット仕様により、ウエスタンブーツの上から綺麗に穿きこなせるシルエットを持っています。","Levi's 517"],
+ ["646","【時代背景・使われ方】1970年代のヒッピー文化やサイケデリックな音楽シーンを背景に大流行したフレア（ベルボトム）モデルです。膝から裾にかけて大きく広がるシルエットは、当時の自由を愛する若者たちのファッションアイコンとなりました。","Levi's 646"]
+ ],
+ tags:[
+ ["レッドタブ：LEVI'S（大文字E）","1936年の登場から1971年頃まで使われたとされる大文字表記。古い製品の有力な手がかり。","1936〜1970年頃","Levi's Big E red tab"],
+ ["レッドタブ：Levi's（小文字e）","1971年以降に変更された小文字混じりのタブ表記。現行品や近年の古着に広く見られる。","1971年以降","Levi's small e red tab"],
+ ["紙パッチ・レザーパッチ","モデル名やサイズ、ロットが記載されるラベル。状態や素材の変化を確認する。","仕様や他のディテールと照合","Levi's jeans paper patch"],
+ ["ボタン裏刻印・内タグ","トップボタン裏の数字や、ケアタグの表記から製造工場や時期を推測する手がかりにする。","工場・年代の補助資料","Levi's button stamp"],
+ ["隠しリベットとバータック","初期〜中期に見られるポケット裏の補強リベット。1966年頃からバータックへ移行。","〜1966年頃の手がかり","Levi's hidden rivet"]
+ ],
+ sources:[["Levi's公式・歴史","https://levi.jp/pages/history"]]
+},
+{
+ id:"lee",name:"Lee",cover:"Lee",category:"デニム・ワーク",
+ intro:"アメリカのワークウェアから生まれたデニムブランド。",
+ history:[
+ ["1889年｜会社の始まり","カンザス州で創業。雑貨からワークウェア製造へシフトしていく。"],
+ ["1911年｜ワークウェア市場への参入","耐久性の高い衣料の需要に応え、本格的なワークウェア製造を開始。"],
+ ["1913年｜Lee Union-Allの誕生","つなぎ服を発明し、整備士や農作業従事者に大ヒット。"],
+ ["1920年代｜カウボーイパンツの開発","西部市場へ向けた馬上で動きやすいデニムを開発。"],
+ ["1926年｜世界初のジッパーフライ","世界初のジッパー式ワークパンツ「101Z」を開発。"],
+ ["1930年代｜カウボーイのための名作","「101」やデニムジャケット「101J」などが次々登場。"],
+ ["1940年代｜大戦下での仕様変更","ミリタリー供給や物資統制に対応した製品作りを行う。"],
+ ["1950年代｜映画と若者文化への浸透","映画を通じてスタイリッシュな若者の象徴となる。"],
+ ["1960-70年代｜世界的展開","「Storm Rider」など防寒アイテムも拡充。"],
+ ["現代｜ヘリテージブランドとして愛される","ヴィンテージ市場でも高い人気を誇る。"]
+ ],
+ models:[
+ ["101","【時代背景・使われ方】アメリカ西部のカウボーイや牧場労働者が、馬上で長時間過ごす際の耐久性と動きやすさを追求して開発されました。左綾織り（Jelt Denim）を採用することで、柔らかさと強靭さを両立しています。","Lee 101"],
+ ["101J","【時代背景・使われ方】カウボーイやロデオライダーのアクションに対応するため、着丈を短くし、胸ポケットを斜めに配置した名作ジャケットです。機能美を極めたコンパクトなシルエットが特徴です。","Lee 101J"],
+ ["Storm Rider","【時代背景・使われ方】寒冷な冬の屋外で作業するワーカーやカウボーイのために、裏地に温かなウールブランケットとコーデュロイの襟を搭載した防寒用デニムジャケットです。","Lee Storm Rider"]
+ ],
+ tags:[
+ ["Leeのブランドタグ","ロゴの字体やデザインで年代の推移を追うことができる。","モデルとセットで確認","Lee jeans label"],
+ ["ボタン・ジッパー","刻印や引き手の形状で仕様を確認。","補足的な手がかり","Lee vintage button"],
+ ["ジャケットの縫製ステッチ","ポケットや胸の切り替え部分の縫製仕様をチェック。","モデル特定の補助","Lee jacket stitching"]
+ ],
+ sources:[["Lee公式サイト","https://www.lee.com/"]]
+},
+{
+ id:"wrangler",name:"Wrangler",cover:"Wrangler",category:"ウエスタン・デニム",
+ intro:"カウボーイ文化とウエスタンウェアの歴史を学ぶ。",
+ history:[
+ ["1904年｜前身となるBlue Bell社設立","ノースカロライナ州でワークウェア製造をスタート。"],
+ ["1940年代前半｜カウボーイ向けの服作り","伝説のテーラー「Rodeo Ben」を迎え、ロデオ用衣料の設計を開始。"],
+ ["1947年｜Wranglerブランド誕生","プロの意見を取り入れた本格的なウエスタンデニムが誕生。"],
+ ["1940年代後半｜11MWZの登場","サドルに座るカウボーイのための機能美を追求したモデル。"],
+ ["1950年代｜ウエスタンシャツの定番化","スナップボタンやヨークを備えたシャツが広く普及。"],
+ ["1960年代｜13MWZの定着","防縮加工デニムを採用し、穿きやすさを向上。"],
+ ["1970年代｜PRCAオフィシャルに","全米プロ・ロデオ協会の公認ブランドとなる。"],
+ ["1980-90年代｜ファッションとの融合","アメカジブームの中で独自のバックポケットステッチが人気に。"],
+ ["2000年代以降｜アーカイブの復刻","現代的アップデートとヘリテージの融合が進む。"],
+ ["現代｜ウエスタンデニムの最高峰","独自の機能美でファンを魅了し続ける。"]
+ ],
+ models:[
+ ["11MWZ","【時代背景・使われ方】プロのロデオカウボーイたちの意見を徹底的に取り入れ、「サドル（馬の鞍）を傷つけない」「またがった時に背中が出ない股上」「ヒップにフィットするパターン」など、馬上の実用性に特化して開発されました。","Wrangler 11MWZ"],
+ ["13MWZ","【時代背景・使われ方】11MWZの進化系として、防縮加工（Sanforized）デニムを採用し、洗濯による縮みを気にせず穿けるように改良されました。全米プロ・ロデオ協会の公認ウェアとしても絶対的な信頼を得ています。","Wrangler 13MWZ"],
+ ["ウエスタンシャツ","【時代背景・使われ方】馬上で激しく動く際にも裾がパンツから抜けにくく、落馬の際に木や枝に引っかかってもスナップボタンが外れることで安全性を確保するという、カウボーイ特有のライフスタイルから生まれた機能的シャツです。","Wrangler western shirt"]
+ ],
+ tags:[
+ ["ブランドタグとBlue Bell表記","古い年代に見られる表記やタグのデザインを確認する。","年代推定の手がかり","Wrangler tag"],
+ ["ウエスタンヨーク","背中や胸元の切り替えデザインの形状をチェック。","モデル特有の仕様","Wrangler western yoke"],
+ ["スナップボタン","ボタンの刻印や形状を確認する。","補足資料として活用","Wrangler snap button"]
+ ],
+ sources:[["Wrangler公式サイト","https://www.wrangler.com/"]]
+},
+{
+ id:"champion",name:"Champion",cover:"Champion",category:"スウェット",
+ intro:"スポーツウェアとリバースウィーブの歴史を学ぶ。",
+ history:[
+ ["1919年｜ニューヨーク州ロチェスターで創業","スポーツウェアの製造をスタート。"],
+ ["1920年代｜スウェットシャツの原型","防寒用アンダーウェアとして開発される。"],
+ ["1930年代｜カレッジスポーツとの融合","大学の部活やチーム向けにスウェットが普及。"],
+ ["1938年｜リバースウィーブ製法の誕生","縦方向の縮みを防ぐ画期的な特許技術が開発される。"],
+ ["1950年代｜ランナーズタグの時代","首元のタグにランナーが描かれたヴィンテージ人気タグ。"],
+ ["1960年代｜プロダクツタグへの移行期","タグのバリエーションが多様化する時代。"],
+ ["1970年代｜単色タグの黄金期","肉厚なボディが特徴の単色タグ（青単・赤単など）全盛期。"],
+ ["1980-90年代｜トリコロール・刺繍タグ","ストリートカルチャーで大ブレイクを果たす。"],
+ ["2000年代以降｜アーカイブの復刻","名作デザインが忠実に蘇る。"],
+ ["現代｜スウェットの代名詞","最高峰のカジュアルウェアとして君臨。"]
+ ],
+ models:[
+ ["Reverse Weave","【時代背景・使われ方】大学の部活動などでスウェットが頻繁に洗濯される中、「縦方向に縮んでしまう」というアスリートたちの悩みを解決するために開発されました。通常は縦に使う生地をあえて横向きフリーズさせ、両脇にリブを設けることで、激しい運動でも型崩れしない強靭な構造を持っています。","Champion reverse weave"],
+ ["カレッジスウェット","【時代背景・使われ方】1930〜70年代にかけて全米の大学（アイビーリーグなど）のスポーツチームや寮生の間で着用され、学校の誇りや連帯感を示すためにスクール名やマスコットが大きくプリントされました。","Champion college sweatshirt"],
+ ["Tシャツ","【時代背景・使われ方】アスリートたちのトレーニング用ウェアとして、吸汗性や通気性に優れたコットン素材で大量に生産され、スポーツから日常のカジュアルウェアへと普及していきました。","Champion t shirt"]
+ ],
+ tags:[
+ ["首元タグの変遷","ランタグ、単色タグ、刺繍タグなどの種類を見極める。","年代特定の重要資料","Champion sweatshirt tag"],
+ ["脇のリブと縫製構造","リバースウィーブ特有のサイド gusset を確認。","構造面のチェック","Champion side rib"],
+ ["プリントの種類と状態","ラバーやフロッキーなどのプリント手法を確認する。","ボディとの年代の一致を見る","Champion sweatshirt print"]
+ ],
+ sources:[["Champion公式サイト","https://www.champion.com/"]]
+},
+{
+ id:"carhartt",name:"Carhartt",cover:"CARHARTT",category:"ワークウェア",
+ intro:"丈夫な素材と実用性からワークウェアを読み解く。",
+ history:[
+ ["1889年｜デトロイトで創業","鉄道作業員のためのタフなオーバーオール作りから始まる。"],
+ ["1910年代｜自社工場の設立","コットン・ダック地を使用した高品質な製品を確立。"],
+ ["第一次世界大戦期｜軍需への貢献","高い縫製技術で軍用衣料も手掛ける。"],
+ ["1930年代｜大恐慌を耐え抜く品質","ワーカーたちの生活を支える信頼のブランドへ。"],
+ ["1970年代｜デトロイトジャケット誕生","ブランドの顔となるシグネチャーモデルが登場。"],
+ ["1980年代｜アクティブジャケット登場","防寒性と動きやすさを両立した名作が誕生。"],
+ ["1990年代｜ストリートでの人気爆発","ヒップホップシーンなどで武骨なファッションとして支持される。"],
+ ["2000年代以降｜Carhartt WIPの誕生","ストリート向けラインが世界的にヒット。"],
+ ["近年の展開｜ヘリテージ人気の高まり","フェードしたダック地がファッションアイコンに。"],
+ ["現代｜タフネスの代名詞","ワーカーとストリートを支え続ける。"]
+ ],
+ models:[
+ ["Detroit Jacket","【時代背景・使われ方】自動車工場や建設現場などのハードワーカーに向けて作られたワークジャケットです。車両の乗り降りや作業中に引っかからないよう着丈が短く設計され、頑丈なダック地にコーデュロイの襟を組み合わせた武骨な機能美が特徴です。","Carhartt Detroit jacket"],
+ ["Active Jacket","【時代背景・使われ方】屋外の寒冷な建設現場や作業環境に対応するため、保温性の高い中綿キルティング裏地と、頭部をすっぽり覆うフードが一体化された防寒用ワークウェアとして広く普及しました。","Carhartt Active Jacket"],
+ ["ダック地パンツ","【時代背景・使われ方】過酷な現場ですり切れや穴あきを防ぐため、極厚のコットンダック地を採用し、膝部分を二重にしたダブルニー仕様など、ワーカーの体を守るための徹底した補強が施されています。","Carhartt duck pants"]
+ ],
+ tags:[
+ ["ロゴパッチ（Cロゴ）","パッチのデザインや文字配置を確認。","ラインや年代の見極め","Carhartt logo patch"],
+ ["内タグ・ケアラベル","品番や製造情報が記載されたタグをチェック。","詳細な仕様の特定","Carhartt care tag"],
+ ["ジッパー・裏地パーツ","ブラスジッパーやブランケット裏地を確認する。","全体の整合性チェック","Carhartt zipper"]
+ ],
+ sources:[["Carhartt公式サイト","https://www.carhartt.com/"]]
+},
+{
+ id:"northface",name:"The North Face",cover:"THE NORTH FACE",category:"アウトドア",
+ intro:"アウトドア用品から発展した機能的な衣服を学ぶ。",
+ history:[
+ ["1966年｜サンフランシスコで小さなショップ創業","登山用具の小売り店としてスタート。"],
+ ["1968年｜ブランド本格始動","画期的なドーム型テントなどを開発。"],
+ ["1970年代｜バックパッキング文化を牽引","本格的ダウンやバックパックが登山家から信頼を得る。"],
+ ["1977年｜マウンテン・パーカ誕生","悪天候に対応するシェルの基準を作る。"],
+ ["1980年代｜極地遠征隊をサポート","過酷な環境に耐えるギアのノウハウを蓄積。"],
+ ["1990年代初頭｜ヌプシ＆デナリ誕生","名作ダウンやフリースが誕生。"],
+ ["1990年代中盤｜ストリートへの浸透","都会の音楽シーン等でも着用されるように。"],
+ ["2000年代以降｜高機能テクノロジーの進化","ヴィンテージ市場で茶タグ・紫タグなどが高騰。"],
+ ["近年の展開｜ヘリテージ復刻のヒット","過去のデザインを蘇らせたラインが人気。"],
+ ["現代｜世界最高峰のアウトドアブランド","自然と都市をシームレスに繋ぐ。"]
+ ],
+ models:[
+ ["Nuptse Jacket","【時代背景・使われ方】1990年代初頭、ヒマラヤなどの極地遠征や冬山登山のベースキャンプでの着用を想定して開発されたダウンジャケットです。保温性を逃がさないボリューム感と、肩周りをパックの摩擦から守る切り替えデザインが特徴です。","North Face Nuptse jacket"],
+ ["Denali Jacket","【時代背景・使われ方】寒冷なアウトドア環境でのレイヤリング（重ね着）システムの中核として開発されたフリースジャケットです。摩耗しやすい肩や肘にナイロン補強を施し、ハードな登山活動に対応しました。","North Face Denali fleece"],
+ ["Mountain Jacket","【時代背景・使われ方】悪天候の山岳地帯において雨風を完全にシャットアウトするため、当時最先端の防水透湿素材（GORE-TEX）と立体裁断を採用した、過酷な自然環境に挑む登山家のためのシェルジャケットです。","North Face mountain jacket"]
+ ],
+ tags:[
+ ["ブランドタグ（茶タグ・紫タグ等）","年代ごとに異なるタグデザインを確認。","年代特定の有力手がかり","North Face vintage tag"],
+ ["品番・製品コード","タグの品番から製品の展開時期を探る。","モデル特定の資料","North Face jacket label"],
+ ["素材・機能表示（GORE-TEX等）","使用されている高機能素材の表記をチェック。","仕様の裏付け","GORE-TEX label"]
+ ],
+ sources:[["The North Face公式サイト","https://www.thenorthface.com/"]]
+},
+{
+ id:"russell",name:"Russell Athletic",cover:"RUSSELL",category:"スポーツウェア",
+ intro:"スウェットとアメリカのスポーツ文化を学ぶ。",
+ history:[
+ ["1902年｜アラバマ州で創業","ニットアンダーウェアの製造からスタート。"],
+ ["1930年代｜アスレチックウェアへ転換","スクール向け運動用衣料の生産に本格参入。"],
+ ["1930年代後半｜ラッセル・スウェット開発","独自のコットンフリース素材で業界のパイオニアに。"],
+ ["第二次世界大戦期｜軍へのユニフォーム供給","米軍向けのトレーニングウェアを大量生産。"],
+ ["1960-70年代｜チームサプライヤーとして黄金期","MLBやNFLなどの公式ユニフォームを手掛ける。"],
+ ["1980年代｜ゴールデンイーグルタグ時代","鷲が描かれたタグや肉厚ボディが全盛期を迎える。"],
+ ["1990年代｜ストリートとスポーツの融合","無地スウェットなどがユースカルチャーに愛される。"],
+ ["2000年代以降｜機能性素材とクラシックの共存","スポーツウェアとヘリテージの展開。"],
+ ["近年の展開｜ヘリテージコレクション復活","古き良きアメリカンスポーツの雰囲気が注目される。"],
+ ["現代｜スポーツアパレルの原点","質実剛健な精神を今に伝える。"]
+ ],
+ models:[
+ ["無地スウェット","【時代背景・使われ方】全米のスクールや大学の部活動で、アスリートたちが練習前後に身体を冷やさないための防寒着として着用されました。飾り気のないシンプルさと、汗を吸収する肉厚なコットンフリース素材が特徴です。","Russell Athletic sweatshirt"],
+ ["カレッジスウェット","【時代背景・使われ方】アメリカンフットボールや野球など、スクールスポーツが全盛期を迎えた時代に、チームの士気を高めるユニフォームや応援グッズとして学校名が大きくプリントされました。","Russell Athletic college sweatshirt"],
+ ["フーディー","【時代背景・使われ方】屋外のグラウンドや冷え込むスタジアムでトレーニングする選手たちのため、頭部や首元を風雨から守る実用的な防寒フードを備えたパーカーとして普及しました。","Russell Athletic hoodie"]
+ ],
+ tags:[
+ ["ロゴタグの種類","年代によるタグデザインの変遷を確認する。","年代特定の目安","Russell Athletic tag"],
+ ["素材・縫製仕様","コットンやポリエステルの混率、縫い方を見る。","品質や時代の確認","Russell Athletic stitching"],
+ ["プリントのデザイン","ひび割れやプリント手法をボディと合わせて確認。","補助的な判断材料","Russell Athletic graphic"]
+ ],
+ sources:[["Russell Athletic公式サイト","https://russellathletic.com/"]]
+},
+{
+ id:"military",name:"ミリタリーウェア",cover:"MILITARY",category:"軍物・機能服",
+ intro:"軍用衣服の目的と、機能的なディテールを学ぶ。",
+ history:[
+ ["20世紀初頭｜米軍被服の近代化","第一次世界大戦に向けた規格化と大量生産体制が整う。"],
+ ["第二次世界大戦期｜機能服の黄金期","A-2やN-1など、後世に残る名作ミリタリーギアが誕生。"],
+ ["1950年代朝鮮戦争期｜M-51とナイロン導入","防寒パーカや初期ナイロン製フライトJKTが登場。"],
+ ["1950年代中盤｜MA-1誕生","ジェット機時代に対応した究極のフライトJKTが完成。"],
+ ["1960年代初頭｜ジャングルファティーグ","熱帯地用戦闘服として速乾・軽量性を追求。"],
+ ["1965年｜M-65フィールドジャケット誕生","ミリタリージャケットの最高傑作が誕生。"],
+ ["1970-80年代｜ECWCSの萌芽","最新化学繊維を取り入れたレイヤリング研究が進む。"],
+ ["官給品と民間品の区別","国への支給品（実物）と一般市場向けの商業モデルが存在。"],
+ ["サープラス文化の定着","放出品が若者たちに平和の象徴として着用される。"],
+ ["現代｜ファッションのルーツに","あらゆるアパレルデザインに影響を与え続ける。"]
+ ],
+ models:[
+ ["M-65 Field Jacket","【時代背景・使われ方】過酷な気候や夜間の冷え込みに対応するため、襟へのフード収納、取り外し可能な防寒ライナー、大量の装備品を収納できる大型ポケットを備えた、野戦における究極の機能服として採用されました。","M-65 field jacket"],
+ ["MA-1","【時代背景・使われ方】ジェット機の導入によりコックピット内が狭くなったため、機器に引っかからないよう凹凸を削ぎ落とし、狭い空間でもスムーズに動けるナイロン製リバーシブル（救助時の視認性を高めるオレンジ裏地）として開発されました。","MA-1 flight jacket"],
+ ["BDU Jacket","【時代背景・使われ方】熱帯雨林や湿地帯など、過酷な環境での戦闘や日常活動に対応するため、軽量で引き裂きに強いリップストップ生地を採用し、機動性を最優先した戦闘服です。","BDU jacket"]
+ ],
+ tags:[
+ ["コントラクトラベル（官給ラベル）","契約番号や納入業者名が記された命綱的ラベル。","年代や官給品特定の決定打","military contract label"],
+ ["NSN（物品番号）等の記載","製品を識別するための統動物品番号を確認する。","仕様・年代の裏付け","military label NSN"],
+ ["ジッパー・ボタン・パーツ","CONOMARやTALONなどのジッパー刻印を確認。","パーツによる年代検証","military zipper"]
+ ],
+ sources:[["National Museum of American History","https://americanhistory.si.edu/"]]
+},
+{
+ id:"llbean",name:"L.L.Bean",cover:"L.L.BEAN",category:"アウトドア・アメカジ",
+ intro:"アウトドアの実用性と、アメリカの日常着を学ぶ。",
+ history:[
+ ["1911年｜ハンティング中のひらめき","自身の足元の濡れを解消するためシューズ試作を開始。"],
+ ["1912年｜ビーンブーツ誕生","会社設立とともに名作ブーツを発売し、全額返金保証で信用を得る。"],
+ ["1920年代｜カタログ通販の本格化","メールオーダーシステムで全米へ商品を届ける。"],
+ ["1940年代｜第二次世界大戦中の協力","戦争物資調達に協力しつつ品質を守り抜く。"],
+ ["1965年｜ボート・アンド・トート誕生","氷塊を運ぶ頑丈なキャンバスバッグとして誕生。"],
+ ["1970年代｜フィールドコートの定番化","コーデュロイ襟のコートがカジュアルとしても人気に。"],
+ ["1980年代｜アウトドアアパレル拡大","フリースやアノラックがカタログを飾り全盛期に。"],
+ ["1990年代｜タグや仕様の変遷","サインタグや青字タグなどヴィンテージのロマンに。"],
+ ["2000年代以降｜ヘリテージの再評価","タイムレスな耐久性が現代ファッションで再評価。"],
+ ["現代｜アメリカの良心","100年以上にわたり外遊びを支えるマスターピース。"]
+ ],
+ models:[
+ ["Bean Boots","【時代背景・使われ方】ハンティング中の創業者L.L.ビーンが「水や泥で足元が冷たく濡れる」という自身の悩みを解決するために考案しました。水を通さない防水ラバーの底部と、柔軟で足馴染みの良いレザーのアッパーを縫い合わせた画期的な構造です。","LL Bean boots"],
+ ["Field Coat","【時代背景・使われ方】アメリカ北東部の厳しい自然環境や森の中を歩くハンターのために作られたコートです。耐久性の高いダック地、首元の保温性を高めるコーデュロイ襟、獲物や道具を収納する大型ポケットを備えています。","LL Bean field coat"],
+ ["フリース・ナイロンJKT","【時代背景・使われ方】キャンプやハイキングなどのアウトドアアクティビティにおいて、軽くて暖かく、かつ悪天候や冷たい風から体を守るためのデイリーな防寒着としてカタログ通販で大ヒットしました。","LL Bean fleece jacket"],
+ ["キャンバストート","【時代背景・使われ方】1944年に、氷の塊やキャンプ道具を運ぶための「極めて頑丈なバッグ」として誕生しました。極厚のキャンバス地と耳付きの丈夫なハンドルは、タフに使える道具として現在も形を変えていません。","LL Bean boat and tote"]
+ ],
+ tags:[
+ ["ブランドタグ（サインタグ・青字等）","タグのフォントやデザインで年代の推移を追う。","大まかな年代特定の目安","LL Bean clothing label"],
+ ["ケアラベル・品番表記","素材や製造国、品番が記されたタグを確認する。","製造背景を知る手がかり","LL Bean care tag"],
+ ["製品固有のディテール","Bean Bootsならソール形状やバッグの耳付きキャンバスなどを確認。","モデルごとの仕様差チェック","LL Bean boots sole"]
+ ],
+ sources:[["L.L.Bean公式・ブランドの歴史","https://www.llbean.com/"]]
+},
+{
+ id:"ralph",name:"Ralph Lauren",cover:"POLO RALPH LAUREN",category:"アメリカントラッド",
+ intro:"シャツ、チノ、ポロシャツからアメリカントラッドを学ぶ。",
+ history:[
+ ["1967年｜ネクタイ店「Polo」創業","幅広のエレガントなタイでニューヨークに登場。"],
+ ["1968年｜メンズスーツ発表","ブリティッシュとアメリカンを融合させたスーツで注目を集める。"],
+ ["1970年代初頭｜ウィメンズとシャツの誕生","ボタンダウンシャツなどトラッドの基盤を固める。"],
+ ["1972年｜ポロシャツとポニーロゴ誕生","24色展開のポロシャツでブランドの象徴を確立。"],
+ ["1980年代前半｜カントリー・アイビーの具現化","アメリカの伝統や大自然をテーマにした世界観を構築。"],
+ ["1980年代後半｜RRLの萌芽","ヴィンテージワークやウエスタンへの深い愛情を形に。"],
+ ["1990年代｜スタジアムコレクションなど名作の時代","スポーツラインやストリートで熱狂的人気を博す名作が続々。"],
+ ["2000年代以降｜高級路線とアーカイブの確立","プレッピーやミリタリーの歴史を網羅した圧倒的アーカイブ。"],
+ ["近年の古着市場での高騰","オールドポロやRRL初期アイテムがコレクターズアイテムに。"],
+ ["現代｜アメリカン・ドリームの象徴","理想のライフスタイルを体現する最高峰ブランド。"]
+ ],
+ models:[
+ ["Polo Shirt","【時代背景・使われ方】1972年にテニスやポロ競技といった上流階級のスポーツシーンに着想を得て誕生しました。紳士がリラックスして着用できる鹿の子素材と、胸元のアイコニックなポニー刺繍がアメリカントラッドの象徴となりました。","Ralph Lauren polo shirt"],
+ ["Oxford Button-Down Shirt","【時代背景・使われ方】イギリスのポロ競技用シャツに由来し、馬上で風に煽られて襟が顔に当たらないようボタンで留めるという実用的なディテールを、アメリカのアイビーリーグの学生やビジネスマンの日常着へと昇華させました。","Ralph Lauren oxford shirt"],
+ ["Chino Pants","【時代背景・使われ方】ミリタリー由来の頑丈なチノクロスをベースにしながら、洗練された美しいプレッピーシルエットに再構築され、アメリカの良質なスクールライフやカントリーライフを体現する定番トラウザーズとなりました。","Ralph Lauren chino pants"],
+ ["ニット・セーター","【時代背景・使われ方】カントリーサイドの上質なライフスタイルや、伝統的なアイビーリーグのスクールカルチャーを背景に、ケーブル編みや温かみのある素材感が大人のカジュアルウェアとして愛され続けています。","Ralph Lauren knit sweater"]
+ ],
+ tags:[
+ ["ブランドタグ・ライン表記","Polo by Ralph LaurenやRRLなどの表記を確認。","ラインと年代の特定","Ralph Lauren label"],
+ ["ケアラベル・製造国","素材や生産国（USA製など）の表記をチェック。","生産背景の推測","Ralph Lauren care label"],
+ ["ポニー刺繍・ボタン仕様","刺繍のサイズ感やボタンの彫りなどを観察する。","デザインのディテール確認","Ralph Lauren pony embroidery"]
+ ],
+ sources:[["Ralph Lauren公式サイト","https://www.ralphlauren.com/"]]
+}
+];
+
+let current=null,section="history",quizQuestions=[],qi=0,score=0,answered=false;
+
+// 初心者〜店長レベルまで幅広い難易度を網羅した全20問の診断テスト
+let placementQuestions=[
+ {q:"Levi's 501の赤タブが初めて登場した年は？",a:["1873年","1936年","1955年","1966年"],correct:1,why:"1936年にレッドタブが誕生し、ブランドの識別が行われるようになりました。"},
+ {q:"Levi's 501のBig Eから小文字のeへ変更された年は？",a:["1966年","1971年","1978年","1983年"],correct:1,why:"1971年にタブの表記が大文字から小文字へ変更されました。"},
+ {q:"Championのリバースウィーブ特許が取得された年は？",a:["1928年","1938年","1948年","1958年"],correct:1,why:"1938年に縦縮みを防ぐ画期的な製法として特許が取得されました。"},
+ {q:"Leeの代表的なワークパンツ「101Z」で世界初採用された仕様は？",a:["ボタンフライ","ジッパーフライ","スナップボタン","ベルクロ開閉"],correct:1,why:"1926年に世界で初めてジッパーフライ（ジッパー式前開き）が採用されました。"},
+ {q:"Wranglerの11MWZなどの開発に深く関わった伝説のテーラーの名前は？",a:["ロデオ・ベン","ボブ・リー","ハミルトン・カーハート","ベンジャミン・ラッセル"],correct:0,why:"伝説のウエスタンテーラー「Rodeo Ben」がカウボーイのための機能美を設計しました。"},
+ {q:"Carharttの代名詞である「ダック地」の素材は主に何？",a:["100%コットン","ポリエステル混紡","ナイロン100%","ウールブレンド"],correct:0,why:"極厚の100%コットンダック地がタフなワークウェアの基準を作りました。"},
+ {q:"L.L.Beanの「ビーンブーツ」の特徴として正しい構造は？",a:["総レザー製","ラバー底とレザーアッパーの結合","完全防水ナイロン製","ソール交換不可の一体成型ウレタン"],correct:1,why:"水を通さない防水ラバーの底部とレザーアッパーを縫い合わせた構造です。"},
+ {q:"Ralph Laurenのポロシャツが誕生した年は？",a:["1967年","1972年","1981年","1985年"],correct:1,why:"1972年にテニスやポロ競技に着想を得て誕生しました。"},
+ {q:"米軍M-65フィールドジャケットが制式採用された年は？",a:["1951年","1960年","1965年","1972年"],correct:2,why:"M-51の後継として1965年に採用されたミリタリージャケットの最高傑作です。"},
+ {q:"Russell Athleticの「ゴールデンイーグル」タグが全盛期を迎えた年代は？",a:["1960年代","1970年代","1980年代","2000年代"],correct:2,why:"鷲が描かれたゴールデンイーグルタグは1980年代のスクールスポーツ全盛期を象徴しています。"},
+ {q:"Levi's 501の隠しリベットが廃止されバータック（カンヌキ）へ移行したおおよその時期は？",a:["1954年頃","1960年頃","1966年頃","1973年頃"],correct:2,why:"1966年頃を境に、ポケット裏の隠しリベットからバータック補強へと移行しました。"},
+ {q:"Leeのデニムで使われる「Jelt Denim（ジェルトデニム）」の織り方の特徴は？",a:["右綾織り（タフで硬い）","左綾織り（柔らかく強靭）","平織り（通気性重視）","綾織りなしのサテン地"],correct:1,why:"Lee独自の左綾織り（Left Hand Twill）により、柔らかさと強靭な耐久性を両立しています。"},
+ {q:"Championのいわゆる「タタキタグ」が主に使われていた年代の傾向は？",a:["1950年代初頭","1960年代中盤〜1970年代初頭","1980年代後半","1990年代"],correct:1,why:"文字が刺繍ではなく叩きつけるように縫い付けられたタグは1960年中盤から70年代初頭に見られます。"},
+ {q:"The North Faceの1970〜80年代を象徴する有名なタグの色は？",a:["茶タグ","赤タグ","黒タグ","紺タグ"],correct:0,why:"初期のアウトドア全盛期を支えた「茶タグ」や「紫タグ」はヴィンテージ市場で非常に人気です。"},
+ {q:"Wranglerの代表的なジーンズ「13MWZ」の「MWZ」は何の略？",a:["Men's Western Zipped","Mechanic Work Zipper","Model Western Z-top","Modern Wrangler Z-cuff"],correct:0,why:"Men's Western Zippedの略であり、カウボーイ向けのジッパーモデルを表しています。"},
+ {q:"古着の年代判別において、Levi'sのトップボタン裏の刻印（例：数字の6など）が示すとされる一般的な情報は？",a:["製造された月日","製造された工場（工場番号）","穿いていた労働者の社員ID","ロットのクオリティランク"],correct:1,why:"ボタン裏の刻印（足長Rや数字、字母）は当時の製造工場（プラントナンバー）を特定する重要手がかりです。"},
+ {q:"Carharttのデトロイトジャケットの襟の切り替え素材としてお馴染みなのは？",a:["リアルレザー","コーデュロイ","ボアファー","ナイロンタフタ"],correct:1,why:"ダック地のボディに温かみのあるコーデュロイの襟が組み合わせられているのがデトロイトのアイコンです。"},
+ {q:"ミリタリーウェアのコントラクトラベル（官給ラベル）に記載される「NSN」の正式名称の意味に近いものは？",a:["National Stock Number（国家備蓄・物品番号）","Naval Service Notice","New Standard Number","Nylon Stock Net"],correct:0,why:"National Stock Number（国軍物品番号）の略で、官給品を管理するための固有番号です。"},
+ {q:"L.L.Beanの「ボート・アンド・トート」が1944年に最初に作られたときの本来の用途は？",a:["氷の塊を運ぶため","狩猟の銃弾を収納するため","釣りの生け簀（いけす）にするため","郵便物を大量に配達するため"],correct:0,why:"冷蔵庫が普及する前に、凍った氷の塊やキャンプギアを運ぶための極厚キャンバスバッグとして誕生しました。"},
+ {q:"Ralph Laurenの最高峰ヴィンテージレーベル「RRL」のインスピレーションの源となった主なスタイルは？",a:["ブリティッシュトラッド全般","アメリカン・ワーク＆ウエスタン","フレンチ・ミリタリー","イタリアン・テーラード"],correct:1,why:"ラルフ・ローレン自身の牧場名に由来し、古き良きアメリカのワークウェアやウエスタン文化への深い愛情が注がれています。"}
+];
+
+let placementIndex=0,placementScore=0;
+
+function esc(s){
+ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function makeCard(b){
+ return `<div class="brand-card" onclick="openBrand('${b.id}')">
+ <div class="brand-cover">${esc(b.cover)}</div>
+ <div class="brand-info"><h3>${esc(b.name)}</h3><p>${esc(b.intro)}</p>
+ <span class="pill">${esc(b.category)}</span></div></div>`;
+}
+document.getElementById("brandGrid").innerHTML=brands.map(makeCard).join("");
+document.getElementById("studyGrid").innerHTML=brands.map(makeCard).join("");
+
+function go(page){
+ ["home","placement","result","study","quiz"].forEach(p=>
+  document.getElementById(p+"Page").classList.toggle("hidden",p!==page));
+ document.querySelectorAll("nav button").forEach(b=>
+  b.classList.toggle("active",b.dataset.page===page));
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// 診断テスト開始
+function startPlacementTest(){
+ placementIndex=0;
+ placementScore=0;
+ go("placement");
+ renderPlacementQuestion();
+}
+
+function renderPlacementQuestion(){
+ const box=document.getElementById("placementBox");
+ if(placementIndex>=placementQuestions.length){
+  showPlacementResult();
+  return;
+ }
+ const q=placementQuestions[placementIndex];
+ box.innerHTML=`
+ <div class="chapter-number">PLACEMENT TEST (${placementIndex+1}/${placementQuestions.length})</div>
+ <div class="progress"><div style="width:${(placementIndex/placementQuestions.length)*100}%"></div></div>
+ <h3>${esc(q.q)}</h3>
+ <div class="answers">
+  ${q.a.map((ans,i)=>`<button class="answer" onclick="answerPlacement(${i})">${String.fromCharCode(65+i)}.${esc(ans)}</button>`).join("")}
+ </div>`;
+}
+
+function answerPlacement(n){
+ const q=placementQuestions[placementIndex];
+ if(n===q.correct) placementScore++;
+ placementIndex++;
+ renderPlacementQuestion();
+}
+
+function showPlacementResult(){
+ let levelTitle="";
+ let recommendedSection="";
+ let sectionName="";
+
+ if(placementScore<=7){
+  levelTitle="初級レベル（ビギナー）";
+  recommendedSection="history";
+  sectionName="第1章：歴史";
+ }else if(placementScore<=14){
+  levelTitle="中級レベル（スタンダード）";
+  recommendedSection="models";
+  sectionName="第2章：代表モデル";
+ }else{
+  levelTitle="上級レベル（古着屋店長・マスター）";
+  recommendedSection="tags";
+  sectionName="第3章：タグと年代判別";
+ }
+
+ const box=document.getElementById("resultBox");
+ box.innerHTML=`
+ <div class="chapter-number">DIAGNOSIS RESULT</div>
+ <h2>あなたの診断結果：${levelTitle}</h2>
+ <p>正解数：${placementScore} / ${placementQuestions.length}問</p>
+ <div class="note">
+  <strong>おすすめのスタート地点：</strong>
+  <p>あなたの知識レベルに合わせて、<strong>${sectionName}</strong>からのスタートをおすすめします！</p>
+ </div>
+ <div style="margin-top:25px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;">
+  <button class="primary" onclick="startRecommendedLesson('${recommendedSection}')">おすすめの場所から学習を始める →</button>
+  <button class="secondary" onclick="go('home')">ホームに戻る</button>
+ </div>`;
+ go("result");
+}
+
+function startRecommendedLesson(sec){
+ current=brands[0];
+ section=sec;
+ document.getElementById("indexView").classList.add("hidden");
+ document.getElementById("chapterView").classList.remove("hidden");
+ document.getElementById("bookhead").innerHTML=
+ `<div class="eyebrow">VINTAGE CLOTHING TEXTBOOK / ${esc(current.category.toUpperCase())}</div>
+ <h1>${esc(current.name)}</h1><p>${esc(current.intro)}</p>`;
+ 
+ const items=[["history","第1章 歴史"],["models","第2章 代表モデル"],["tags","第3章 タグと年代判別"]];
+ document.getElementById("chapterNav").innerHTML=items.map(x=>
+ `<button class="${x[0]===section?"active":""}" onclick="showSection('${x[0]}')">${x[1]}</button>`).join("");
+ 
+ renderSection();
+ go("study");
+}
+
+function backIndex(){
+ document.getElementById("indexView").classList.remove("hidden");
+ document.getElementById("chapterView").classList.add("hidden");
+}
+
+function openBrand(id){
+ current=brands.find(b=>b.id===id);
+ section="history";
+ document.getElementById("indexView").classList.add("hidden");
+ document.getElementById("chapterView").classList.remove("hidden");
+ document.getElementById("bookhead").innerHTML=
+ `<div class="eyebrow">VINTAGE CLOTHING TEXTBOOK / ${esc(current.category.toUpperCase())}</div>
+ <h1>${esc(current.name)}</h1><p>${esc(current.intro)}</p>`;
+ const items=[["history","第1章 歴史"],["models","第2章 代表モデル"],["tags","第3章 タグと年代判別"]];
+ document.getElementById("chapterNav").innerHTML=items.map(x=>
+ `<button class="${x[0]===section?"active":""}" onclick="showSection('${x[0]}')">${x[1]}</button>`).join("");
+ renderSection();
+ go("study");
+}
+
+function showSection(s){
+ section=s;
+ document.querySelectorAll("#chapterNav button").forEach((b,i)=>
+  b.classList.toggle("active",["history","models","tags"][i]===s));
+ renderSection();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function renderSection(){
+ if(section==="history")renderHistory();
+ if(section==="models")renderModels();
+ if(section==="tags")renderTags();
+}
+
+function renderHistory(){
+ document.getElementById("lesson").innerHTML=`
+ <div class="chapter-number">CHAPTER 01 / HISTORY</div>
+ <h2>${esc(current.name)}の歴史</h2>
+ <p>${esc(current.intro)} この章では、ブランドがどのような背景から生まれ、製品や文化がどのように変化したかを学ぶ。</p>
+ <div class="timeline">${current.history.map((x,i)=>`
+ <div class="era"><strong>${esc(x[0])}</strong><p>${esc(x[1])}</p></div>`).join("")}</div>`;
+}
+
+function renderModels(){
+ document.getElementById("lesson").innerHTML=`
+ <div class="chapter-number">CHAPTER 02 / ICONIC MODELS</div>
+ <h2>${esc(current.name)}の代表モデル</h2>
+ <p>代表モデルの解説と参考画像です。手持ちの写真に変えたい場合は下のファイル選択をご利用ください。</p>
+ <div id="modelList">${current.models.map((m,i)=>`
+ <div class="model">
+ <div><div class="chapter-number">MODEL ${String(i+1).padStart(2,"0")}</div>
+ <h3>${esc(m[0])}</h3><p>${esc(m[1])}</p></div>
+ <div>
+  <div style="background:#eee8dd;border-radius:8px;overflow:hidden;text-align:center;">
+   <img id="modelimg${i}" alt="${esc(m[0])}の参考画像" style="width:100%;height:260px;object-fit:contain;display:block;">
+  </div>
+  <div class="image-credit" id="modelcredit${i}">参考画像を読み込み中…</div>
+  <div style="margin-top:6px;">
+   <input type="file" accept="image/*" style="font-size:11px;width:100%;" onchange="uploadCustomImage(event, 'modelimg${i}', 'modelcredit${i}')">
+  </div>
+ </div>
+ </div>`).join("")}</div>`;
+ loadReferenceImages(current.models.map(m=>m[2]),"modelimg","modelcredit");
+}
+
+function renderTags(){
+ document.getElementById("lesson").innerHTML=`
+ <div class="chapter-number">CHAPTER 03 / TAGS & DATING</div>
+ <h2>${esc(current.name)}のタグと年代判別</h2>
+ <p>年代判別とは、タグ、品番、素材、縫製などの情報を集め、製造時期の候補を絞り込む作業である。</p>
+ <div id="tagList">${current.tags.map((t,i)=>`
+ <div class="tag-row">
+ <div><div class="chapter-number">DETAIL ${String(i+1).padStart(2,"0")}</div>
+ <h3>${esc(t[0])}</h3><p>${esc(t[1])}</p>
+ <span class="estimate">年代の目安：${esc(t[2])}</span>
+ </div>
+ <div>
+  <div style="background:#eee8dd;border-radius:8px;overflow:hidden;text-align:center;">
+   <img id="tagimg${i}" alt="${esc(t[0])}の参考画像" style="width:100%;height:235px;object-fit:contain;display:block;">
+  </div>
+  <div class="image-credit" id="tagcredit${i}">タグ画像を読み込み中…</div>
+  <div style="margin-top:6px;">
+   <input type="file" accept="image/*" style="font-size:11px;width:100%;" onchange="uploadCustomImage(event, 'tagimg${i}', 'tagcredit${i}')">
+  </div>
+ </div>
+ </div>`).join("")}</div>`;
+ loadReferenceImages(current.tags.map(t=>t[3]),"tagimg","tagcredit");
+}
+
+async function loadReferenceImages(queries,imgPrefix,creditPrefix){
+ await Promise.all(queries.map(async(q,i)=>{
+  const img=document.getElementById(imgPrefix+i);
+  const credit=document.getElementById(creditPrefix+i);
+  if(!q){ setFallbackImage(img, credit); return; }
+  try{
+   const url="https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch="+
+   encodeURIComponent(q+" filetype:bitmap")+"&gsrnamespace=6&gsrlimit=5&prop=imageinfo&iiprop=url&iiurlwidth=800&format=json&origin=*";
+   const res=await fetch(url);
+   if(!res.ok)throw new Error("request");
+   const data=await res.json();
+   const pages=Object.values(data.query?.pages||{});
+   const chosen=pages.find(p=>p.imageinfo?.[0]?.thumburl||p.imageinfo?.[0]?.url);
+   if(!chosen)throw new Error("no image");
+   const info=chosen.imageinfo[0];
+   img.src=info.thumburl||info.url;
+   img.alt=q;
+   img.onerror=()=>{setFallbackImage(img, credit);};
+   credit.textContent="参考画像（Wikimedia Commons）";
+  }catch(e){
+   setFallbackImage(img, credit);
+  }
+ }));
+}
+
+function setFallbackImage(img, credit) {
+ if(img) {
+  img.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='200' viewBox='0 0 24 20'%3E%3Cpath fill='%23a39e93' d='M16.5 3c-.4 0-.8.2-1 .5l-1.5 2H10L8.5 3.5C8.3 3.2 7.9 3 7.5 3H4c-.6 0-1 .4-1 1s.4 1 1 1h2.2l2.3 3.1c.3.4.8.6 1.3.6h2.4c.5 0 1-.2 1.3-.6L17.8 5H20c.6 0 1-.4 1-1s-.4-1-1-1h-3.5zM4 8v9c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8H4z'/%3E%3C/svg%3E";
+  img.style.objectFit = "contain";
+  img.style.padding = "50px";
+  img.style.background = "#e7dfd1";
+ }
+ if(credit) credit.textContent = "画像未設定（手持ちの写真に変更可能）";
+}
+
+function uploadCustomImage(event, imgId, creditId) {
+ const file = event.target.files[0];
+ if(!file)return;
+ const reader = new FileReader();
+ reader.onload = function(e) {
+  const img = document.getElementById(imgId);
+  const credit = document.getElementById(creditId);
+  img.src = e.target.result;
+  img.style.display = "block";
+  img.style.padding = "0";
+  img.style.background = "#eee8dd";
+  if(credit) credit.textContent = "カスタム画像（アップロード済み）";
+ };
+ reader.readAsDataURL(file);
+}
+
+/* ===== 追加機能：FuruLearn 学習パス・適応型診断・相場チェック ===== */
+const extraBrands = [
+ {id:"fivebrother",name:"Five Brother",cover:"FIVE BROTHER",category:"ワーク",intro:"ネルシャツで知られるアメリカのワークウェアブランド。",history:[["1890年頃｜ブランドの始まり","アメリカのワークウェア文化と結びついたブランド。ネルシャツなどの実用着で知られる。"],["古着で見るポイント","生地の厚み、チェック柄、ボタン、タグ、縫製や縮み具合を合わせて確認する。"]],models:[["ヘビーネルシャツ","厚手の起毛コットンを使ったワークシャツ。チェック柄や生地の風合いが特徴。","Five Brother flannel shirt"]],tags:[["ブランドタグ","タグのロゴや表記を確認し、縫製・素材など他の情報と合わせて年代を考える。","タグだけで断定しない","Five Brother vintage label"]],sources:[]},
+ {id:"pendleton",name:"Pendleton",cover:"PENDLETON",category:"アウトドア・ウール",intro:"ウールシャツやブランケットで有名なアメリカのブランド。",history:[["1863年｜ルーツ","オレゴン州周辺のウール産業と結びつき、毛織物の歴史を築いた。"],["古着で見るポイント","ウールの質感、チェック柄、襟や袖の状態、虫食い、タグ表記を確認する。"]],models:[["ウールボードシャツ","ウール素材のチェックシャツ。保温性と柄の豊富さが魅力。","Pendleton wool board shirt"]],tags:[["ウールラベル","素材表記やブランドロゴ、製造国などを確認する。","表記と仕様を照合","Pendleton vintage label"]],sources:[]},
+ {id:"woolrich",name:"Woolrich",cover:"WOOLRICH",category:"アウトドア・ワーク",intro:"アウトドアウェアやウール製品の歴史を持つブランド。",history:[["1830年｜創業","アメリカのペンシルベニア州でウール製品の歴史をスタート。"],["古着で見るポイント","ウール素材、チェック柄、ボタン、ジッパー、内タグ、ダメージを総合的に確認する。"]],models:[["ウールチェックシャツ","保温性のあるウール素材とチェック柄が定番。","Woolrich vintage wool shirt"]],tags:[["ブランドタグ・ケアタグ","ロゴ、素材表記、製造国、品番を手がかりにする。","複数の情報で判断","Woolrich vintage label"]],sources:[]}
+];
+for (const b of extraBrands) if (!brands.some(x=>x.id===b.id)) brands.push(b);
+
+// 追加ページを既存の教科書やテストを壊さずに追加
+const featureStyle = document.createElement('style');
+featureStyle.textContent = `
+.feature-panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:clamp(16px,3vw,28px);margin:16px 0}
+.path-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.path-card{background:#fffdf8;border:1px solid var(--line);border-radius:12px;padding:16px}
+.path-card button{margin-top:8px}
+.field{display:block;width:100%;max-width:520px;padding:11px;border:1px solid var(--line);border-radius:8px;margin:8px 0 15px;background:#fffdf8}
+.feature-nav{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
+.feature-nav button{background:#fffdf8;border:1px solid var(--line);border-radius:22px;padding:8px 12px;color:var(--ink)}
+@media(max-width:760px){.path-grid{grid-template-columns:1fr}.feature-panel{padding:15px}}
+`;
+document.head.appendChild(featureStyle);
+const featurePages = [
+ ['learnPage','学習コース'],['pricePage','相場チェック'],['priceQuizPage','価格当てクイズ'],['genreQuizPage','ジャンルクイズ']
+];
+for (const [id] of featurePages) {
+ if (!document.getElementById(id)) { const el=document.createElement('section'); el.id=id; el.className='hidden'; document.querySelector('main').appendChild(el); }
+}
+const nav=document.querySelector('header nav');
+for (const [id,label] of [['learn','学習コース'],['price','相場チェック'],['priceQuiz','価格クイズ'],['genreQuiz','ジャンルクイズ']]) {
+ if (!Array.from(nav.querySelectorAll('button')).some(b=>b.dataset.page===id)) {
+  const btn=document.createElement('button'); btn.dataset.page=id; btn.textContent=label; btn.onclick=()=>go(id); nav.appendChild(btn);
+ }
+}
+// 既存のgo関数を拡張
+const originalGo = go;
+go = function(page){
+ const map={home:'homePage',placement:'placementPage',result:'resultPage',study:'studyPage',quiz:'quizPage',learn:'learnPage',price:'pricePage',priceQuiz:'priceQuizPage',genreQuiz:'genreQuizPage'};
+ Object.values(map).forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});
+ const target=document.getElementById(map[page]||'homePage'); if(target)target.classList.remove('hidden');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(page==='learn')renderLearningPath();
+ if(page==='price')renderPricePage();
+ if(page==='priceQuiz')renderPriceQuiz();
+ if(page==='genreQuiz')renderGenreQuiz();
+};
+// 診断問題を難易度つきで用意し、正解なら上げ、間違いなら近い難易度に留める
+const adaptiveQuestions = [
+ {level:1,q:'古着を買うとき、まず確認したいものは？',a:['商品の状態','有名人が着たかだけ','値札の色だけ','店のBGM'],c:0,why:'穴や汚れ、破れ、ボタン欠損など状態の確認が基本。'},
+ {level:1,q:'「古着」はどんな服？',a:['一度人の手に渡った服など','必ず100年以上前の服','新品の服だけ','必ず海外製の服'],c:0,why:'一般に過去に販売・使用された衣服を指す。'},
+ {level:2,q:'ネルシャツでよく使われる素材は？',a:['コットン','ガラス','セメント','紙だけ'],c:0,why:'起毛したコットン生地などがよく使われる。'},
+ {level:2,q:'ワークウェアの特徴として近いものは？',a:['作業に向く丈夫さ','装飾だけが目的','必ず薄いシルク','使い捨て前提'],c:0,why:'作業着由来の服は耐久性や機能性が重視される。'},
+ {level:3,q:'Levi’sの501の前開き仕様は基本的に？',a:['ボタンフライ','マジックテープ','ひもだけ','スナップだけ'],c:0,why:'501の代表的な特徴はボタンフライ。'},
+ {level:3,q:'Pendletonでよく知られるアイテムは？',a:['ウールシャツやブランケット','スキューバマスク','革靴専業','野球グローブだけ'],c:0,why:'ウール製品やチェックシャツがよく知られている。'},
+ {level:4,q:'アウトドア古着で確認したい実用面は？',a:['ジッパーや防水機能の状態','ロゴの大きさだけ','着用者の身長だけ','写真の背景色'],c:0,why:'機能服はジッパー、裏地、コーティングなどの状態が重要。'},
+ {level:4,q:'ミリタリー衣料のコントラクトラベルは何の手がかり？',a:['納入情報や管理番号','着用者の趣味','必ず販売価格','洗濯回数'],c:0,why:'契約・納入や管理情報を読み取る手がかりになる。'},
+ {level:5,q:'古着の年代判別で最も適切な考え方は？',a:['タグ・縫製・素材など複数を照合','タグ1つだけで断定','色だけで断定','値段だけで断定'],c:0,why:'単独の特徴で決めつけず、複数の仕様を照合する。'},
+ {level:5,q:'Five Brotherで特に知られるアイテムは？',a:['ヘビーネルシャツ','スーツケース','ランニングシューズ','革の野球ボール'],c:0,why:'厚手のチェックネルシャツで知られる。'},
+ {level:6,q:'古着の価格に大きく影響しやすい組み合わせは？',a:['ブランド・モデル・状態・需要','写真の明るさだけ','購入者の誕生月','ハンガーの色'],c:0,why:'相場は複数要素で変わる。'},
+ {level:6,q:'同じブランド・同じモデルでも値段が変わる理由は？',a:['年代や状態、サイズ、需要が違う','価格は必ず同じ','服の色は関係ない','タグは絶対に無関係'],c:0,why:'年代、サイズ、コンディション、人気などで相場が変わる。'},
+ {level:7,q:'Woolrichの古着をチェックするときに大事なのは？',a:['素材・タグ・ダメージを総合確認','ロゴだけで真贋断定','匂いだけで年代断定','ボタン数だけで価格決定'],c:0,why:'複数の情報を合わせて判断する。'},
+ {level:8,q:'「USA製」と書かれていれば必ず高額になる？',a:['必ずではない','必ず高額','必ず偽物','年代が必ず特定できる'],c:0,why:'生産国だけで価格や年代は決まらない。'},
+ {level:9,q:'高額なヴィンテージ品を見極める際に有効なのは？',a:['モデル特定と複数の根拠を確認','出品タイトルを信じ切る','タグだけを見て即決','価格が高ければ本物と判断'],c:0,why:'品番、ディテール、状態、信頼できる資料を合わせて確認する。'},
+ {level:10,q:'相場を調べるときに最も比較しやすい方法は？',a:['同じモデル・状態に近い複数の売買例を見る','無関係な服と比較','最安値1件だけを見る','新品価格だけを見る'],c:0,why:'条件が近い複数の取引例を比較すると相場をつかみやすい。'}
+];
+let adaptiveState={n:0,level:1,score:0,seen:[],current:null};
+function startPlacementTest(){adaptiveState={n:0,level:1,score:0,seen:[],current:null};go('placement');renderAdaptiveQuestion();}
+function renderAdaptiveQuestion(){
+ const box=document.getElementById('placementBox');
+ if(adaptiveState.n>=15){showAdaptiveResult();return;}
+ const pool=adaptiveQuestions.filter(q=>q.level===adaptiveState.level&&!adaptiveState.seen.includes(q.q));
+ const q=(pool[0]||adaptiveQuestions.find(x=>!adaptiveState.seen.includes(x.q))||adaptiveQuestions[0]); adaptiveState.current=q;
+ box.innerHTML=`<div class="chapter-number">ADAPTIVE TEST · ${adaptiveState.n+1}/15 · LEVEL ${adaptiveState.level}/10</div><div class="progress"><div style="width:${adaptiveState.n/15*100}%"></div></div><h3>${esc(q.q)}</h3><div class="answers">${q.a.map((a,i)=>`<button class="answer" onclick="answerAdaptive(${i})">${String.fromCharCode(65+i)}. ${esc(a)}</button>`).join('')}</div><p class="muted">正解すると難易度が上がり、間違えると同じくらいの難易度で練習します。</p>`;
+}
+function answerAdaptive(i){const q=adaptiveState.current;if(!q)return;if(i===q.c){adaptiveState.score++;adaptiveState.level=Math.min(10,adaptiveState.level+1);}else{adaptiveState.level=Math.max(1,Math.min(adaptiveState.level,q.level));}adaptiveState.seen.push(q.q);adaptiveState.n++;renderAdaptiveQuestion();}
+function showAdaptiveResult(){const level=Math.max(1,Math.min(10,Math.round(adaptiveState.score/15*9)+1));const box=document.getElementById('resultBox');box.innerHTML=`<div class="chapter-number">YOUR VINTAGE LEVEL</div><h2>あなたの古着レベルは ${level}/10</h2><p>正解：${adaptiveState.score}/15問</p><div class="progress"><div style="width:${level*10}%"></div></div><p>${level<=3?'まずはブランドの歴史や古着の基本から！':level<=6?'代表モデルとジャンルの違いを学ぼう！':'タグ・状態・相場を比較する練習に進もう！'}</p><button class="primary" onclick="go('learn')">このレベルから学習する →</button> <button class="secondary" onclick="go('home')">ホームへ</button>`;go('result');}
+
+const lessons=[
+ {title:'古着の基本',desc:'状態・サイズ・素材をチェックする',q:'古着を買うとき最初に確認したいことは？',a:['状態とサイズ','ロゴだけ','写真の背景'],c:0,tip:'汚れ、穴、ジッパー、実寸を確認しよう。'},
+ {title:'ブランドのジャンル',desc:'ワーク・ミリタリー・アウトドアの違い',q:'作業用に丈夫さを重視した服のジャンルは？',a:['ワーク','ドレス','パジャマ'],c:0,tip:'ワークウェアは耐久性や動きやすさがポイント。'},
+ {title:'デニム入門',desc:'501などの定番モデルを知る',q:'Levi’s 501の代表的な前開きは？',a:['ボタンフライ','ベルクロ','ひも'],c:0,tip:'モデル名だけでなく、年代ごとの仕様も確認しよう。'},
+ {title:'ネルシャツ',desc:'Five Brotherのようなワークシャツを学ぶ',q:'ネルシャツの生地の特徴は？',a:['起毛した柔らかな生地が多い','金属製','必ず防水'],c:0,tip:'生地の厚み、柄、縮み、袖口の状態も確認。'},
+ {title:'タグと年代',desc:'タグだけで決めつけず仕様を照合',q:'年代判別で正しい方法は？',a:['複数のディテールを照合','タグ1つで断定','値段だけで判断'],c:0,tip:'タグ・縫製・ジッパー・素材などを総合して考える。'},
+ {title:'相場を読む',desc:'同じモデルの売買例を比べる',q:'相場を調べるとき比較したいものは？',a:['同モデルで状態が近い複数例','無関係な新品','1件だけの価格'],c:0,tip:'販売価格と実際の売却価格は異なることもある。'}
+];
+function renderLearningPath(){const done=JSON.parse(localStorage.getItem('furulearnDone')||'[]');document.getElementById('learnPage').innerHTML=`<div class="hero"><div class="eyebrow">YOUR DAILY VINTAGE PATH</div><h1>今日の古着レッスン</h1><p>1日5分から。短いレッスンをクリアして古着の知識を積み上げよう。</p><p>クリア済み ${done.length}/${lessons.length} レッスン</p><div class="progress"><div style="width:${done.length/lessons.length*100}%"></div></div></div><div class="path-grid">${lessons.map((l,i)=>`<div class="path-card"><div class="chapter-number">LESSON ${String(i+1).padStart(2,'0')}</div><h3>${esc(l.title)} ${done.includes(i)?'✓':''}</h3><p>${esc(l.desc)}</p><button class="primary" onclick="openMiniLesson(${i})">${done.includes(i)?'もう一度学ぶ':'レッスン開始'}</button></div>`).join('')}</div><div class="feature-panel"><h3>教科書を読む</h3><p>今までのブランド別教科書もそのまま利用できます。</p><button class="secondary" onclick="go('study')">ブランド一覧へ</button></div>`;}
+function openMiniLesson(i){const l=lessons[i];const box=document.getElementById('learnPage');box.innerHTML=`<div class="feature-panel"><button class="secondary" onclick="renderLearningPath()">← 学習コースに戻る</button><div class="chapter-number">QUICK LESSON ${i+1}</div><h2>${esc(l.title)}</h2><p>${esc(l.desc)}</p><h3>${esc(l.q)}</h3><div class="answers">${l.a.map((a,n)=>`<button class="answer" onclick="checkMiniLesson(${i},${n})">${esc(a)}</button>`).join('')}</div><div id="miniFeedback"></div></div>`;}
+function checkMiniLesson(i,n){const l=lessons[i],f=document.getElementById('miniFeedback');if(n===l.c){let d=JSON.parse(localStorage.getItem('furulearnDone')||'[]');if(!d.includes(i))d.push(i);localStorage.setItem('furulearnDone',JSON.stringify(d));f.innerHTML=`<div class="note"><strong>正解！ +10 XP</strong><p>${esc(l.tip)}</p><button class="primary" onclick="renderLearningPath()">次のレッスンへ</button></div>`;}else{f.innerHTML=`<div class="note"><strong>もう一度！</strong><p>選択肢を見直してみよう。</p></div>`;}}
+
+function renderPricePage(){document.getElementById('pricePage').innerHTML=`<div class="feature-panel"><div class="chapter-number">VINTAGE PRICE CHECK</div><h2>古着の相場チェック</h2><p>写真をアップロードして、ブランド・アイテム・状態などを入力すると、確認ポイントと参考用の価格帯を表示します。<strong>写真だけで自動鑑定する機能ではありません。</strong></p><h3>写真を撮るときのコツ</h3><ul class="checklist"><li>服全体を正面から撮る</li><li>ブランドタグ・洗濯タグ・品番を撮る</li><li>ダメージ、汚れ、穴、ジッパーを撮る</li><li>デニムはボタン裏、パッチ、ポケット裏なども撮る</li><li>明るい場所でピントを合わせ、影を避ける</li></ul><label>写真を選ぶ<input id="pricePhoto" class="field" type="file" accept="image/*" capture="environment" onchange="previewPricePhoto(event)"></label><img id="pricePreview" alt="アップロードした古着の写真" class="hidden" style="max-width:100%;max-height:340px;border-radius:10px;background:#eee8dd"><label>ブランド・モデル<input id="priceBrand" class="field" placeholder="例：Levi’s 501 / Pendleton wool shirt"></label><label>状態<select id="priceCondition" class="field"><option value="good">目立つダメージなし</option><option value="fair">使用感・小さなダメージあり</option><option value="poor">大きなダメージあり</option><option value="excellent">状態がかなり良い</option></select></label><label>タグ・年代の情報<input id="priceDetails" class="field" placeholder="例：USA製、紙パッチ、タグの表記など"></label><label>アイテム種別<select id="priceType" class="field"><option value="shirt">シャツ</option><option value="denim">デニム・パンツ</option><option value="jacket">ジャケット・アウター</option><option value="sweat">スウェット</option><option value="other">その他</option></select></label><button class="primary" onclick="estimatePrice()">確認ポイントと価格目安を表示</button><div id="priceResult"></div><p class="muted">表示価格は学習用のざっくりした目安です。最新の取引データに接続していないため、実際の相場を保証しません。</p></div>`;}
+function previewPricePhoto(e){const f=e.target.files?.[0];if(!f)return;const img=document.getElementById('pricePreview');img.src=URL.createObjectURL(f);img.classList.remove('hidden');}
+function estimatePrice(){const brand=document.getElementById('priceBrand').value.trim()||'ブランド未入力';const condition=document.getElementById('priceCondition').value;const type=document.getElementById('priceType').value;const details=document.getElementById('priceDetails').value.trim();let range={shirt:[1500,7000],denim:[2500,12000],jacket:[3000,18000],sweat:[2000,10000],other:[1000,8000]}[type];if(condition==='excellent'){range=[Math.round(range[0]*1.2),Math.round(range[1]*1.25)];}if(condition==='fair'){range=[Math.round(range[0]*.7),Math.round(range[1]*.75)];}if(condition==='poor'){range=[Math.round(range[0]*.35),Math.round(range[1]*.45)];}const fmt=n=>n.toLocaleString('ja-JP');document.getElementById('priceResult').innerHTML=`<div class="note"><h3>確認結果（学習用の仮目安）</h3><p><strong>${esc(brand)}</strong></p><p>参考レンジ：<strong>約${fmt(range[0])}〜${fmt(range[1])}円</strong></p><p>この価格帯は一般的なアイテム分類と状態を使った仮の目安です。ブランド・モデル・年代・サイズ・売れた実例によって大きく変わります。</p><h4>次に確認すること</h4><ul><li>同じモデル・近い状態の「売り切れ」商品を複数比較</li><li>タグ・品番・製造国・ディテールを記録</li><li>穴、汚れ、リペア、縮み、ジッパーの動作を確認</li>${details?`<li>入力したタグ情報：${esc(details)}</li>`:''}</ul><button class="secondary" onclick="go('priceQuiz')">価格当てクイズにも挑戦</button></div>`;}
+const priceQuizData=[{q:'古着の相場を調べるとき、いちばん参考になるのは？',a:['同じモデルの売り切れ例を複数見る','値札の色','新品の無関係な商品'],c:0,why:'実際に売れた近い条件の商品を複数比較しよう。'},{q:'同じジャケットなら必ず同じ価格？',a:['状態やサイズ、年代で変わる','必ず同じ','ブランド名だけで決まる'],c:0,why:'状態・サイズ・年代・需要などで価格は変わる。'},{q:'高値がつきやすい要素の例は？',a:['人気モデルで状態が良く需要がある','大きな破れが多い','情報が何も分からない'],c:0,why:'人気と状態、モデルの希少性などが価格に影響する。'},{q:'出品中の価格と実際に売れた価格は？',a:['異なる場合がある','必ず同じ','出品価格は必ず相場より低い'],c:0,why:'売り手の希望価格と成立価格は別。売り切れ例も確認しよう。'}];
+let pqIndex=0,pqScore=0;
+function renderPriceQuiz(){const box=document.getElementById('priceQuizPage');if(pqIndex>=priceQuizData.length){box.innerHTML=`<div class="quizbox"><h2>価格当てクイズ終了！</h2><p>${pqScore}/${priceQuizData.length}問正解</p><button class="primary" onclick="pqIndex=0;pqScore=0;renderPriceQuiz()">もう一度</button></div>`;return;}const q=priceQuizData[pqIndex];box.innerHTML=`<div class="quizbox"><div class="chapter-number">PRICE QUIZ ${pqIndex+1}/${priceQuizData.length}</div><div class="progress"><div style="width:${pqIndex/priceQuizData.length*100}%"></div></div><h3>${esc(q.q)}</h3><div class="answers">${q.a.map((a,i)=>`<button class="answer" onclick="answerPriceQuiz(${i})">${esc(a)}</button>`).join('')}</div><div id="pqFeedback"></div></div>`;}
+function answerPriceQuiz(i){const q=priceQuizData[pqIndex];if(i===q.c)pqScore++;document.getElementById('pqFeedback').innerHTML=`<div class="note"><strong>${i===q.c?'正解！':'おしい！'}</strong><p>${esc(q.why)}</p><button class="primary" onclick="pqIndex++;renderPriceQuiz()">次へ</button></div>`;}
+const genreQuestions=[{q:'厚手のネルシャツやペインターパンツと相性が深いジャンルは？',a:['ワーク','フォーマル','ランニング競技'],c:0,why:'作業着由来の丈夫なアイテムがワーク系。'},{q:'M-65やMA-1などのルーツに近いジャンルは？',a:['ミリタリー','プレッピー','サーフ'],c:0,why:'軍用衣料をルーツとするミリタリーウェア。'},{q:'フリースやマウンテンパーカなどが代表的なのは？',a:['アウトドア','ドレス','ワークスーツだけ'],c:0,why:'登山や野外活動向けの機能性が特徴。'},{q:'PendletonやWoolrichで注目したい素材は？',a:['ウール','コンクリート','紙'],c:0,why:'ウール製品やチェックシャツなどが知られる。'},{q:'Five Brotherのイメージに近いアイテムは？',a:['ヘビーネルシャツ','レザーローファー専業','競泳水着'],c:0,why:'厚手のネルシャツで知られるワーク系ブランド。'}];let gqIndex=0,gqScore=0;
+function renderGenreQuiz(){const box=document.getElementById('genreQuizPage');if(gqIndex>=genreQuestions.length){box.innerHTML=`<div class="quizbox"><h2>ジャンルクイズ終了！</h2><p>${gqScore}/${genreQuestions.length}問正解</p><button class="primary" onclick="gqIndex=0;gqScore=0;renderGenreQuiz()">もう一度</button><button class="secondary" onclick="go('learn')">学習コースへ</button></div>`;return;}const q=genreQuestions[gqIndex];box.innerHTML=`<div class="quizbox"><div class="chapter-number">GENRE QUIZ ${gqIndex+1}/${genreQuestions.length}</div><h3>${esc(q.q)}</h3><div class="answers">${q.a.map((a,i)=>`<button class="answer" onclick="answerGenreQuiz(${i})">${esc(a)}</button>`).join('')}</div><div id="gqFeedback"></div></div>`;}
+function answerGenreQuiz(i){const q=genreQuestions[gqIndex];if(i===q.c)gqScore++;document.getElementById('gqFeedback').innerHTML=`<div class="note"><strong>${i===q.c?'正解！':'もう一度覚えよう'}</strong><p>${esc(q.why)}</p><button class="primary" onclick="gqIndex++;renderGenreQuiz()">次へ</button></div>`;}
+// ホームの案内を新機能に合わせて更新
+const heroText=document.querySelector('#homePage .hero p');if(heroText)heroText.textContent='適応型診断で古着レベルをチェック。短いレッスン、ジャンルクイズ、相場チェックで少しずつ知識を増やそう。';
+const heroButton=document.querySelector('#homePage .hero .primary');if(heroButton){heroButton.textContent='⚡ 15問のレベル診断を始める';heroButton.onclick=startPlacementTest;}
+const homeSection=document.createElement('div');homeSection.className='feature-panel';homeSection.innerHTML=`<h2>学習ツール</h2><div class="path-grid"><div class="path-card"><h3>🪜 学習コース</h3><p>短いレッスンで毎日少しずつ学ぶ</p><button class="primary" onclick="go('learn')">学習を始める</button></div><div class="path-card"><h3>📷 相場チェック</h3><p>写真とタグ情報から確認ポイントを整理</p><button class="primary" onclick="go('price')">写真でチェック</button></div><div class="path-card"><h3>🧠 クイズ</h3><p>価格やワーク・ミリタリー・アウトドアを学ぶ</p><button class="secondary" onclick="go('priceQuiz')">価格クイズ</button> <button class="secondary" onclick="go('genreQuiz')">ジャンルクイズ</button></div></div>`;
+document.getElementById('homePage').appendChild(homeSection);
+// 元のブランド一覧は維持し、追加ブランドも一覧に反映
+ document.getElementById('brandGrid').innerHTML=brands.map(makeCard).join('');
+ document.getElementById('studyGrid').innerHTML=brands.map(makeCard).join('');
+go("home");
+</script>
+</body>
+</html>
